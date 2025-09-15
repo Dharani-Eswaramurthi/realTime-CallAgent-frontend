@@ -18,7 +18,7 @@ pip install -r requirements.txt
 3. Set environment variables
 
 ```bash
-export PORT=4001
+export PORT=4000
 export WEBHOOK_SECRET=your_shared_secret
 ```
 
