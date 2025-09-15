@@ -1,0 +1,188 @@
+{
+  "type": "post_call_transcription",
+  "event_timestamp": 1757952601,
+  "data": {
+    "agent_id": "agent_5801k53sh15pfysvq5re9xzne33f",
+    "conversation_id": "conv_2801k5727bz0fnarkg89sb2xhrzf",
+    "status": "done",
+    "user_id": "ojP8WfOgkSaVWDlXIMI6pOI4lgr1",
+    "transcript": [
+      {
+        "role": "agent",
+        "message": "مرحباً، لقد تواصلت مع دعم ميراكو. يغطي هذا العرض التوضيحي خمسة طرازات محددة من مكيفات الهواء. قد يتم تسجيل هذه المكالمة لتحسين الخدمة - هل يمكنني المتابعة؟ ما الطراز الذي يمكنني مساعدتك بشأنه اليوم؟",
+        "multivoice_message": null,
+        "tool_calls": [],
+        "tool_results": [],
+        "feedback": null,
+        "llm_override": null,
+        "time_in_call_secs": 1,
+        "conversation_turn_metrics": {
+          "metrics": {
+            "convai_tts_service_ttfb": {
+              "elapsed_time": 0.572754813998472
+            }
+          }
+        },
+        "rag_retrieval_info": null,
+        "llm_usage": null,
+        "interrupted": false,
+        "original_message": null,
+        "source_medium": null
+      }
+    ],
+    "metadata": {
+      "start_time_unix_secs": 1757952585,
+      "accepted_time_unix_secs": 1757952586,
+      "call_duration_secs": 13,
+      "cost": 69,
+      "deletion_settings": {
+        "deletion_time_unix_secs": null,
+        "deleted_logs_at_time_unix_secs": null,
+        "deleted_audio_at_time_unix_secs": null,
+        "deleted_transcript_at_time_unix_secs": null,
+        "delete_transcript_and_pii": false,
+        "delete_audio": false
+      },
+      "feedback": {
+        "overall_score": null,
+        "likes": 0,
+        "dislikes": 0
+      },
+      "authorization_method": "authorization_header",
+      "charging": {
+        "dev_discount": true,
+        "is_burst": false,
+        "tier": "free",
+        "llm_usage": {
+          "irreversible_generation": {
+            "model_usage": {}
+          },
+          "initiated_generation": {
+            "model_usage": {}
+          }
+        },
+        "llm_price": 0,
+        "llm_charge": 0,
+        "call_charge": 69
+      },
+      "phone_call": null,
+      "batch_call": null,
+      "termination_reason": "Client disconnected: 1005",
+      "error": null,
+      "main_language": "en",
+      "rag_usage": null,
+      "text_only": false,
+      "features_usage": {
+        "language_detection": {
+          "enabled": true,
+          "used": false
+        },
+        "transfer_to_agent": {
+          "enabled": false,
+          "used": false
+        },
+        "transfer_to_number": {
+          "enabled": false,
+          "used": false
+        },
+        "multivoice": {
+          "enabled": false,
+          "used": false
+        },
+        "dtmf_tones": {
+          "enabled": false,
+          "used": false
+        },
+        "external_mcp_servers": {
+          "enabled": false,
+          "used": false
+        },
+        "pii_zrm_workspace": false,
+        "pii_zrm_agent": false,
+        "tool_dynamic_variable_updates": {
+          "enabled": false,
+          "used": false
+        },
+        "is_livekit": false,
+        "voicemail_detection": {
+          "enabled": false,
+          "used": false
+        },
+        "workflow": {
+          "enabled": false,
+          "tool_node": {
+            "enabled": false,
+            "used": false
+          }
+        },
+        "agent_testing": {
+          "enabled": false,
+          "tests_ran_after_last_modification": false,
+          "tests_ran_in_last_7_days": false
+        }
+      },
+      "eleven_assistant": {
+        "is_eleven_assistant": false
+      },
+      "initiator_id": "ojP8WfOgkSaVWDlXIMI6pOI4lgr1",
+      "conversation_initiation_source": "react_sdk",
+      "conversation_initiation_source_version": "0.5.0",
+      "timezone": null
+    },
+    "analysis": {
+      "evaluation_criteria_results": {},
+      "data_collection_results": {
+        "Summary": {
+          "data_collection_id": "Summary",
+          "value": "Greeting and consent given, customer intent is to inquire about a specific AC model.",
+          "json_schema": {
+            "type": "string",
+            "description": "The transcription of the Miraco AC support agent’s call should be processed into a structured summary that captures the key steps of the interaction: greeting and consent, customer intent, necessary details collected (model, issue, city, etc.), the answer provided using Miraco’s policy or product info, any official page offered, resolution outcome (resolved / callback required), and the closing. The summary must remain concise, objective, and aligned with the defined call flow, without adding extra claims or details not mentioned in the conversation.",
+            "dynamic_variable": "",
+            "constant_value": ""
+          },
+          "rationale": "The agent greets the customer, mentions the call might be recorded, and asks for the model they need help with. This aligns with the initial steps of a support call: greeting and consent, and identifying customer intent."
+        }
+      },
+      "call_successful": "success",
+      "transcript_summary": "The AI agent, representing Miraco support, greets the user and states the demo covers five specific AC models. It asks for the model the user needs help with and mentions the call might be recorded for service improvement.\n",
+      "call_summary_title": "Miraco support call"
+    },
+    "conversation_initiation_client_data": {
+      "conversation_config_override": {
+        "tts": {
+          "voice_id": null,
+          "stability": null,
+          "speed": null,
+          "similarity_boost": null
+        },
+        "conversation": {
+          "text_only": null
+        },
+        "agent": {
+          "first_message": null,
+          "language": null,
+          "prompt": null
+        }
+      },
+      "custom_llm_extra_body": {},
+      "user_id": "ojP8WfOgkSaVWDlXIMI6pOI4lgr1",
+      "source_info": {
+        "source": "react_sdk",
+        "version": "0.5.0"
+      },
+      "dynamic_variables": {
+        "system__agent_id": "agent_5801k53sh15pfysvq5re9xzne33f",
+        "system__current_agent_id": "agent_5801k53sh15pfysvq5re9xzne33f",
+        "system__conversation_id": "conv_2801k5727bz0fnarkg89sb2xhrzf",
+        "system__caller_id": null,
+        "system__called_number": null,
+        "system__call_duration_secs": 12,
+        "system__time_utc": "2025-09-15T16:09:58.134761+00:00",
+        "system__time": "Monday, 16:09 15 September 2025",
+        "system__timezone": null,
+        "system__call_sid": null
+      }
+    }
+  }
+}
