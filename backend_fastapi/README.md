@@ -25,7 +25,7 @@ export WEBHOOK_SECRET=your_shared_secret
 4. Start the server
 
 ```bash
-uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-4001} --reload
+uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-4000} --reload
 ```
 
 Endpoints
