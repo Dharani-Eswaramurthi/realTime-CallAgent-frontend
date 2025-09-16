@@ -11,6 +11,33 @@ export function Conversation() {
   const [transcriptSummary, setTranscriptSummary] = useState<string | null>(null);
   const [transcript, setTranscript] = useState<Array<{ role: string; message: string }>>([]);
   
+  // Polling for transcript updates every 10 seconds
+  useEffect(() => {
+    const pollTranscript = async () => {
+      try {
+        const backendBase = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4000';
+        const resp = await fetch(`${backendBase}/conversations/latest`, { cache: 'no-store' });
+        if (resp.ok) {
+          const data = await resp.json();
+          const agentMessages = Array.isArray(data.transcript) ? data.transcript : [];
+          const summary = typeof data.summary === 'string' ? data.summary : null;
+          
+          setTranscript(agentMessages);
+          setTranscriptSummary(summary);
+        }
+      } catch (error) {
+        // Silently fail - don't show errors during polling
+        console.log('Polling failed:', error);
+      }
+    };
+    
+    // Poll immediately and then every 10 seconds
+    pollTranscript();
+    const interval = setInterval(pollTranscript, 10000);
+    
+    return () => clearInterval(interval);
+  }, []);
+  
   const conversation = useConversation({
     onConnect: () => {
       console.log('Connected to agent');
@@ -61,31 +88,6 @@ export function Conversation() {
     try {
       await conversation.endSession();
       setIsAnimating(false);
-
-      // After call ends, fetch transcript summary and messages from backend
-      const backendBase = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
-      // If you have a conversation id, pass it here. Using latest for demo simplicity.
-      const resp = await fetch(`${backendBase}/conversations/`, { cache: 'no-store' });
-      if (!resp.ok) {
-        throw new Error(`Failed to load transcript (${resp.status})`);
-      }
-      const data = await resp.json();
-      const items = Array.isArray(data?.items) ? data.items : [];
-      // Prefer the latest post_call_transcription with expected fields
-      const latest = items.find((it: any) => it && it.type === 'post_call_transcription');
-
-      // Safely access nested fields per backend payload shape
-      const rawTranscript = latest?.data?.transcript;
-      const rawSummary = latest?.data?.analysis?.transcript_summary;
-
-      const mappedTranscript: Array<{ role: string; message: string }> = Array.isArray(rawTranscript)
-        ? rawTranscript
-            .filter((t: any) => t && typeof t.role === 'string' && typeof t.message === 'string')
-            .map((t: any) => ({ role: t.role, message: t.message }))
-        : [];
-
-      setTranscript(mappedTranscript);
-      setTranscriptSummary(typeof rawSummary === 'string' ? rawSummary : null);
     } catch (error) {
       console.error('Failed to stop conversation:', error);
       setError(error instanceof Error ? error.message : 'Failed to stop conversation');
@@ -288,7 +290,7 @@ export function Conversation() {
             <ul className="mt-1 space-y-1">
               {transcript.map((t, idx) => (
                 <li key={idx} className="text-sm text-white/90">
-                  <span className="font-semibold capitalize">{t.role}:</span> {t.message}
+                  <span className="font-semibold capitalize">{t.role === 'agent' ? 'Agent' : 'Human'}:</span> {t.message}
                 </li>
               ))}
             </ul>

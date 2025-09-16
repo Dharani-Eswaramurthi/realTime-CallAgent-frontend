@@ -4,7 +4,6 @@ import base64
 from pathlib import Path
 from fastapi import APIRouter, Request, Header, HTTPException
 from app.utils.signature import verify_signature
-from app.storage.file_store import save_conversation_payload
 
 
 router = APIRouter()
@@ -36,7 +35,12 @@ async def elevenlabs_webhook(
     except Exception:
         raise HTTPException(status_code=400, detail={"error": "Invalid payload"})
 
-    save_conversation_payload(payload=payload)
+    # Store payload in payload.json (overwrite each time)
+    data_dir = Path(os.getcwd()) / "backend" / "data"
+    data_dir.mkdir(parents=True, exist_ok=True)
+    payload_file = data_dir / "payload.json"
+    with payload_file.open("w", encoding="utf-8") as f:
+        json.dump(payload, f, ensure_ascii=False, indent=2)
 
     # concise one-line summary output
     try:
