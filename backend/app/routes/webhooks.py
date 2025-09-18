@@ -4,7 +4,9 @@ import base64
 from pathlib import Path
 from fastapi import APIRouter, Request, Header, HTTPException
 from app.utils.signature import verify_signature
+from dotenv import load_dotenv
 
+load_dotenv(override=True)
 
 router = APIRouter()
 
@@ -15,7 +17,7 @@ async def elevenlabs_webhook(
     elevenlabs_signature: str | None = Header(default=None, alias="ElevenLabs-Signature"),
     elevenlabs_timestamp: str | None = Header(default=None, alias="ElevenLabs-Timestamp"),
 ):
-    secret = os.environ.get("WEBHOOK_SECRET", "")
+    secret = os.getenv("WEBHOOK_SECRET", "")
     print(secret)
     if not secret:
         raise HTTPException(status_code=500, detail={"error": "Webhook secret not configured"})
