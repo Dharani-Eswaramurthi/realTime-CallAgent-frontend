@@ -1,3 +1,5 @@
+# Build and deploy Node.js app to Azure Web App - miracoCallCenter
+
 name: Build and deploy Node.js app to Azure Web App - miracoCallCenter
 
 on:
@@ -25,10 +27,16 @@ jobs:
           npm run build --if-present
           npm test --if-present
 
-      # Sanity check that dist exists
+      # Sanity check that dist exists (PowerShell syntax)
       - name: Show build output
         run: |
-          if exist dist (echo dist exists && dir dist) else (echo dist NOT found! && exit /b 1)
+          if (Test-Path dist) {
+            Write-Output "dist exists"
+            Get-ChildItem dist -Force
+          } else {
+            Write-Error "dist NOT found!"
+            exit 1
+          }
 
       # Upload ONLY the dist folder
       - name: Upload build artifact (dist)
