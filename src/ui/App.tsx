@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 type Turn = { role: string; message: string };
 
-const BACKEND_BASE = (import.meta.env.VITE_BACKEND_URL as string) || 'http://localhost:8000';
+const BACKEND_BASE = (import.meta.env.VITE_BACKEND_URL as string) || 'https://miracocallcenterapi.azurewebsites.net';
 
 export function App() {
   const [summary, setSummary] = useState<string | null>(null);
