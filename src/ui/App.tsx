@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 type Turn = { role: string; message: string };
 
-const BACKEND_BASE = import.meta.env.VITE_BACKEND_URL as string;
+const BACKEND_BASE = (import.meta.env.VITE_BACKEND_URL as string) || 'https://miracocallcenterapi.azurewebsites.net';
 
 export function App() {
   const [summary, setSummary] = useState<string | null>(null);
@@ -142,6 +142,12 @@ export function App() {
               })}
             </div>
           )}
+
+          {/* File uploader (dashed drag-and-drop area) */}
+          <div className="uploader" role="region" aria-label="Upload area">
+            <span className="uploader-title">Upload audio or text</span>
+            <span className="uploader-sub">Drag & drop files here, or click to browse</span>
+          </div>
         </section>
 
         {/* Sidebar (right, fixed 300px with overflow) */}
