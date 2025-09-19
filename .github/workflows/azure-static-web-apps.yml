@@ -9,14 +9,14 @@ on:
 
 jobs:
   build_and_deploy:
-    if: github.event_name != 'pull_request' || github.event.action != 'closed'
+    # keep this job from running on PR close
+    if: ${{ github.event_name != 'pull_request' || github.event.action != 'closed' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ⬇️ If you have a frontend that needs building, do it here.
-      # Replace with your actual commands (npm/pnpm/yarn) and working directory.
+      # If you have a frontend build, run it here (adjust as needed)
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
@@ -30,21 +30,20 @@ jobs:
         run: npm run build
         working-directory: .
 
-      # Deploy (only if the token exists)
       - name: Deploy to Azure Static Web Apps
-        if: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN != '' }}
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }} # leave empty if not set
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: upload
-          app_location: /                 # path to your frontend source
-          api_location: ""                # leave empty unless using SWA-managed APIs
-          output_location: dist           # folder created by your build (adjust if different)
+          app_location: /
+          api_location: ""
+          output_location: dist
+          # ⬇️ This prevents a hard failure when the token is missing (e.g., forks)
           skip_deploy_on_missing_secrets: true
 
   close_pull_request_job:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    if: ${{ github.event_name == 'pull_request' && github.event.action == 'closed' }}
     runs-on: ubuntu-latest
     steps:
       - name: Close Azure Static Web Apps PR environment
