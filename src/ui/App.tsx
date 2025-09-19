@@ -143,11 +143,6 @@ export function App() {
             </div>
           )}
 
-          {/* File uploader (dashed drag-and-drop area) */}
-          <div className="uploader" role="region" aria-label="Upload area">
-            <span className="uploader-title">Upload audio or text</span>
-            <span className="uploader-sub">Drag & drop files here, or click to browse</span>
-          </div>
         </section>
 
         {/* Sidebar (right, fixed 300px with overflow) */}
