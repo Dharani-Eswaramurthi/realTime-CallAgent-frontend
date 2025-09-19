@@ -1,5 +1,3 @@
-# Build and deploy Node.js app to Azure Web App - miracoCallCenter
-
 name: Build and deploy Node.js app to Azure Web App - miracoCallCenter
 
 on:
@@ -16,57 +14,69 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Set up Node.js version
+        uses: actions/setup-node@v3
         with:
           node-version: '20.x'
 
-      - name: Install, build, and test
+      - name: npm install, build, and test
         run: |
-          npm ci
+          npm install
           npm run build --if-present
-          npm test --if-present
+          npm run test --if-present
 
-      # Sanity check that dist exists (PowerShell syntax)
-      - name: Show build output
-        run: |
-          if (Test-Path dist) {
-            Write-Output "dist exists"
-            Get-ChildItem dist -Force
-          } else {
-            Write-Error "dist NOT found!"
-            exit 1
-          }
-
-      # Upload ONLY the dist folder
-      - name: Upload build artifact (dist)
+      - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: dist
-          path: dist
-          if-no-files-found: error
+          name: node-app
+          path: .
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
 
     steps:
-      - name: Download artifact into ./dist
+      - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: dist
-          path: ./dist
-
-      - name: List files to confirm
-        run: |
-          pwd
-          ls -la
-          ls -la dist
+          name: node-app
 
       - name: Deploy to Azure Web App
+        id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'miracoCallCenter'
           slot-name: 'Production'
-          package: ./dist
+          package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_CAECECFFFD47472DB97F8CA99D377B5E }}
+
+      # --- Post-deploy move (Windows App Service) ---
+      - name: Move dist/* up one level on App Service (via Kudu)
+        if: always()
+        env:
+          PUBLISHPROFILE: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_CAECECFFFD47472DB97F8CA99D377B5E }}
+        run: |
+          # Parse publish profile for Kudu creds/host
+          readarray -t CREDS < <(python3 - <<'PY'
+          import os, xml.etree.ElementTree as ET
+          root = ET.fromstring(os.environ['PUBLISHPROFILE'])
+          ms = next(p for p in root.findall('.//publishProfile') if p.get('publishMethod')=='MSDeploy')
+          print(ms.get('userName'))
+          print(ms.get('userPWD'))
+          print(ms.get('publishUrl').split(':')[0])  # e.g. myapp.scm.azurewebsites.net
+          PY
+          )
+          USER="${CREDS[0]}"
+          PASS="${CREDS[1]}"
+          HOST="${CREDS[2]}"
+
+          # Build JSON body for Kudu /api/command (runs AFTER deployment)
+          cat > body.json <<'JSON'
+          {
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"$ErrorActionPreference = 'Stop'; $root = '$env:HOME\\site\\wwwroot'; $dist = Join-Path $root 'dist'; if (Test-Path $dist) { Get-ChildItem -LiteralPath $dist -Force | Move-Item -Destination $root -Force; Remove-Item -LiteralPath $dist -Recurse -Force; Write-Host 'Moved dist contents.' } else { Write-Host 'No dist folder found; skipping.' }\"",
+            "dir": "site\\wwwroot"
+          }
+          JSON
+
+          curl -sS -u "$USER:$PASS" -H "Content-Type: application/json" \
+               -X POST --data-binary @body.json "https://$HOST/api/command"
